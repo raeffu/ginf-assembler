@@ -3,12 +3,33 @@ lda #$00   ;xpos
 sta $0
 lda #$02   ;ypos
 sta $1
+lda #$00   ;y counter
+sta $3
 
-ldy #$0     ;y initialisieren
+ldy $3     ;y initialisieren
 
 draw:
-lda #$1    ; Wert 1 (weiss) in akku laden
-; 1 an die Adresse aus Speicher 00+x schreiben
+lda $03
+cmp #$ff
+beq newLine
+
+lda #$3    ; Wert 3 (türkis) in akku laden
+; 1 an die Adresse aus Speicher 00+y schreiben
 sta ($00), y
 iny
+sty $03    ;y zwischenspeichern, wenn grösser als               256, dann ypos inc
+
+jmp draw
+
+newLine:
+lda #$3
+sta ($00), y
+
+ldx $1
+inx
+stx $1
+
+ldy #$0 ;reset y
+sty $03
+
 jmp draw
